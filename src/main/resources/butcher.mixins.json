@@ -1,0 +1,24 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "com.butcher.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"SoundEngineMixin",
+		"GuiScreenMixin",
+		"ChatComponentMixin",
+		"ChatComponentInvoker",
+		"GameRendererMixin",
+		"GuiRenderStateFadeMixin",
+		"GuiTextRenderStateAccessor",
+		"HudFadeMixin",
+		"GuiFadeMixin",
+		"HudHiddenMixin",
+		"DroppedItemHideMixin",
+		"PickupHideMixin",
+		"HudInvoker"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

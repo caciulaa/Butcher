@@ -1,0 +1,16 @@
+name: Suggestion
+description: An idea - a drop or mob that should get an animation, a setting, anything.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: What would you like Butcher to do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+      description: What would it make better? Where in SkyBlock does it come up?

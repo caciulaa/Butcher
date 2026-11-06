@@ -1,0 +1,28 @@
+name: Bug report
+description: A cutscene played when it shouldn't have, didn't play when it should, or something broke.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Right after it happens, run `/butcher report` in game (or click *Report a bug or suggest something* under General in `/butcher`). It saves a report of what Butcher decided and why, and copies it to your clipboard.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What were you doing, what did you expect, and what did Butcher do instead?
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: The report
+      description: Paste it here (it is on your clipboard), or drag in the file from `config/butcher/reports/`.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots or a clip help a lot with anything visual.

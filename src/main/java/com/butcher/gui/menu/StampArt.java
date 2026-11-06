@@ -1,0 +1,358 @@
+package com.butcher.gui.menu;
+
+import com.butcher.ledger.Grade;
+import com.butcher.ledger.Ledger;
+import com.butcher.ledger.Stamp;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * How a Ledger stamp looks, through {@link Draw} - shared by the book and the in-game pop-up, and drawable offline.
+ *
+ * An ink stamp, the way a butcher stamps a carcass "Inspected and Passed": an outer ring (the grade's colour on a
+ * tiered stamp), a thin paper ring inside it, the ink with the stamp's own item in the middle, and the grade as pips
+ * under it. Each stamp has its own item ({@link #ITEMS}) and one of six shapes ({@link Shape}), taken in turn along its
+ * chapter so no two neighbours on a page match (the user: "so it doesnt get repetitive"). Real ink is never even, so a few pixels of each stamp are missing - the same ones every time, picked
+ * by the stamp's id. Every stamp sits a little crooked, again by its id.
+ */
+public final class StampArt {
+    private StampArt() {}
+
+    /** The cream of the Ledger's pages, and the pencil drawn on them. */
+    public static final int PAPER = 0xFFEDE3CA, PENCIL = 0xFF8C7B5E;
+
+    /** The outline a stamp is cut to. Every row of each is one or two runs, so it fills a row at a time. */
+    public enum Shape { CIRCLE, OCTAGON, SQUARE, SHIELD, DIAMOND, SCALLOP }
+
+    /** The stamp's shape: the next one along for each stamp in its chapter, so a page never repeats side by side. */
+    public static Shape shape(Stamp s) {
+        List<Stamp> mates = Ledger.chapter(s.chapter());
+        int i = Math.max(0, mates.indexOf(s));
+        Shape[] all = Shape.values();
+        return all[(i + s.chapter().ordinal() * 2) % all.length];
+    }
+
+    /** The stamp's own item: a SkyBlock head ("head:set:name" - the drop itself, from the bundled NEU skins), a pack
+     *  item ("model:id|vanilla") or a vanilla item's registry path (GuiDraw knows them all); the chapter's if it has none. */
+    public static String item(Stamp s) {
+        return ITEMS.getOrDefault(s.id(), s.chapter().icon);
+    }
+
+    /** One item per stamp: the SkyBlock item where its skin is bundled, else a vanilla stand-in (docs/TODO.md lists
+     *  those). A vanilla one must also be in GuiDraw's list, or it draws as paper. On 26.2 coloured items (wool,
+     *  dyes) and copper ones (lightning rods...) are collections, not single items: wool is {@code WOOL.pick(colour)}
+     *  in GuiDraw, and the copper family is avoided - one of them in the switch breaks GuiDraw's ItemStack. */
+    static final Map<String, String> ITEMS = Map.ofEntries(
+            Map.entry("house_open", "bell"), Map.entry("house_regular", "clock"),
+            Map.entry("house_full_menu", "cake"), Map.entry("house_always_wins", "skeleton_skull"),
+            Map.entry("house_hot_streak", "fire_charge"), Map.entry("house_tycoon", "gold_ingot"),
+            Map.entry("house_places_to_be", "feather"), Map.entry("house_night_shift", "lantern"),
+            Map.entry("house_jackpot_777", "emerald"), Map.entry("house_well_done", "cooked_beef"),
+            Map.entry("house_collector", "item_frame"), Map.entry("house_big_ticket", "diamond"),
+
+            Map.entry("scatha_worm_food", "rotten_flesh"), Map.entry("scatha_rare_cut", "head:scatha:pet"),
+            Map.entry("scatha_choice_cut", "head:scatha:pet"), Map.entry("scatha_prime_cut", "head:scatha:pet"),
+            Map.entry("scatha_full_set", "chest"), Map.entry("scatha_beginners_luck", "rabbit_foot"),
+            Map.entry("scatha_dry_aged", "beef"), Map.entry("scatha_dry_aged_45", "bone"),
+            Map.entry("scatha_slippery", "slime_ball"), Map.entry("scatha_back_to_back", "egg"),
+            Map.entry("scatha_dozen", "bread"), Map.entry("scatha_cereal", "head:vanguard:Dwarven O's Metallic Minis"),
+
+            Map.entry("vg_thawed_out", "ice"), Map.entry("vg_cold_hands", "head:vanguard:Glacite Amalgamation"),
+            Map.entry("vg_heart_of_glass", "head:vanguard:Shattered Locket"), Map.entry("vg_frostbitten", "head:vanguard:Frostbitten Dye"),
+            Map.entry("vg_ice_cold", "blue_ice"), Map.entry("vg_negative_equity", "redstone"),
+            Map.entry("vg_in_the_black", "head:vanguard:Flawless Onyx Gemstone"), Map.entry("vg_skeleton_crew", "head:vanguard:Suspicious Scrap"),
+            Map.entry("vg_cold_storage", "barrel"), Map.entry("vg_will_o_wisp", "head:vanguard:Caged Wisp"),
+            Map.entry("vg_tough_skin", "head:vanguard:Frozen Scute"), Map.entry("vg_master_key", "tripwire_hook"),
+
+            Map.entry("diana_heads", "golden_shovel"), Map.entry("diana_brain_food", "head:diana:Brain Food"),
+            Map.entry("diana_chimera", "enchanted_book"), Map.entry("diana_stinger", "head:diana:Fateful Stinger"),
+            Map.entry("diana_manticore", "head:diana:Manti-core"), Map.entry("diana_crown", "golden_helmet"),
+            Map.entry("diana_wool", "yellow_wool"), Map.entry("diana_relic", "head:diana:Minos Relic"),
+            Map.entry("diana_dye", "head:diana:Mythological Dye"), Map.entry("diana_pantheon", "head:creatures:KING_MINOS"),
+            Map.entry("diana_shared_custody", "name_tag"), Map.entry("diana_inquisition", "head:creatures:INQUISITOR"),
+
+            Map.entry("hellion_fire_watch", "blaze_rod"), Map.entry("hellion_double_down", "enchanted_book"),
+            Map.entry("hellion_roll_dice", "head:slayer:Archfiend Dice"), Map.entry("hellion_high_roller", "head:slayer:High Class Archfiend Dice"),
+            Map.entry("hellion_playing_fire", "head:slayer:Flame Dye"), Map.entry("hellion_ashes", "gunpowder"),
+            Map.entry("hellion_power_trip", "head:slayer:Scorched Power Crystal"), Map.entry("hellion_cold_feet", "powder_snow_bucket"),
+            Map.entry("hellion_blueprints", "map"), Map.entry("hellion_paragon", "head:slayer:Paragon Shard"),
+            Map.entry("hellion_hellfire_club", "magma_cream"), Map.entry("hellion_seventh_circle", "nether_star"),
+
+            Map.entry("lava_magma_maker", "head:lava:Thunder"), Map.entry("lava_flash", "enchanted_book"),
+            Map.entry("lava_meltdown", "head:lava:RADIOACTIVE_VIAL"), Map.entry("lava_end_times", "head:lava:BURNT_TEXTS"),
+            Map.entry("lava_kuudra", "head:lava:DYE_CARMINE"), Map.entry("lava_jaw_dropping", "head:lava:Lord Jawbus"),
+            Map.entry("lava_thermal_runaway", "lava_bucket"), Map.entry("lava_chained", "head:lava:CHAIN_END_TIMES"),
+            Map.entry("lava_pinch_me", "head:lava:SEVERED_PINCER"), Map.entry("lava_forged", "anvil"),
+            Map.entry("lava_shell_shocked", "head:lava:SCUTTLER_SHELL"), Map.entry("lava_hot_catch", "fishing_rod"),
+
+            Map.entry("fin_shark_week", "cod"), Map.entry("fin_big_fish", "head:fishing:Megalodon"),
+            Map.entry("fin_bigger_fish", "head:fishing:Megalodon"), Map.entry("fin_tooth_fairy", "ghast_tear"),
+            Map.entry("fin_off_the_hook", "fishing_rod"), Map.entry("fin_dentist", "bone_meal"),
+            Map.entry("fin_school", "salmon"), Map.entry("fin_dry_dock", "oak_boat"),
+            Map.entry("fin_feeding_frenzy", "kelp"), Map.entry("fin_both_ends", "nautilus_shell"),
+
+            Map.entry("wisp_sorrowful", "ghast_tear"), Map.entry("wisp_plasma", "ender_eye"),
+            Map.entry("wisp_spirit_level", "phantom_membrane"), Map.entry("wisp_drowning", "water_bucket"),
+            Map.entry("wisp_high_voltage", "end_rod"), Map.entry("wisp_bittersweet", "honey_bottle"),
+            Map.entry("wisp_double_haunting", "soul_lantern"), Map.entry("wisp_poltergeist", "echo_shard"),
+            Map.entry("wisp_matched_pair", "glass_bottle"), Map.entry("wisp_witching_hour", "jack_o_lantern"),
+
+            // The secret stamps (2026-10-17).
+            Map.entry("house_unlucky_13", "cobweb"), Map.entry("house_leap_of_faith", "lily_pad"),
+            Map.entry("house_christmas_ham", "cooked_porkchop"), Map.entry("house_two_timer", "spyglass"),
+            Map.entry("house_health_inspector", "barrier"), Map.entry("house_natural", "golden_apple"),
+            Map.entry("house_loose_change", "gold_nugget"), Map.entry("scatha_round_number", "ender_pearl"),
+            Map.entry("scatha_is_that_it", "stick"), Map.entry("scatha_cereal_killer", "bowl"),
+            Map.entry("vg_brain_freeze", "snow_block"), Map.entry("diana_nobody_expects", "head:creatures:INQUISITOR"),
+            Map.entry("hellion_number_beast", "wither_skeleton_skull"), Map.entry("hellion_snake_eyes", "fermented_spider_eye"),
+            Map.entry("lava_hot_potato", "baked_potato"), Map.entry("fin_bigger_boat", "trident"),
+            Map.entry("wisp_aint_afraid", "carved_pumpkin"),
+
+            // The Grave, the Cocoon, the Garden, the Automaton and the Summoning Eye (2026-10-26). "model:<id>|<vanilla>"
+            // is a Hypixel pack item, drawn as the vanilla one when the pack is not loaded.
+            Map.entry("rev_six_feet", "iron_shovel"), Map.entry("rev_heads_roll", "head:revtara:BEHEADED_HORROR"),
+            Map.entry("rev_maggot", "head:revtara:FESTERING_MAGGOT"), Map.entry("rev_smite", "enchanted_book"),
+            Map.entry("rev_hand", "head:revtara:SEVERED_HAND"), Map.entry("rev_reaper", "iron_hoe"),
+            Map.entry("rev_shredded", "head:revtara:SHARD_OF_THE_SHREDDED"), Map.entry("rev_deep_dark", "head:revtara:WARDEN_HEART"),
+            Map.entry("rev_wake", "head:revtara:DYE_MATCHA"), Map.entry("rev_graveyard_shift", "soul_torch"),
+            Map.entry("rev_undertaker", "bone_block"), Map.entry("rev_open_casket", "spruce_trapdoor"),
+            Map.entry("rev_rest_in_pieces", "totem_of_undying"), Map.entry("tara_exterminator", "spider_eye"),
+            Map.entry("tara_talisman", "head:revtara:TARANTULA_TALISMAN"), Map.entry("tara_venom", "head:revtara:VIAL_OF_VENOM"),
+            Map.entry("tara_swatter", "model:hypixel_skyblock:item/slayer/spider/fly_swatter|wooden_shovel"), Map.entry("tara_snail", "head:revtara:ENSNARED_SNAIL"),
+            Map.entry("tara_husk", "head:revtara:SHRIVELED_WASP"), Map.entry("tara_digested", "poisonous_potato"),
+            Map.entry("tara_thousand_eyes", "head:revtara:PRIMORDIAL_EYE"), Map.entry("tara_red_thread", "head:revtara:DYE_BRICK_RED"),
+            Map.entry("tara_tangled", "lead"), Map.entry("tara_silk_road", "string"),
+            Map.entry("tara_eight_legs", "spider_spawn_egg"), Map.entry("tara_whole_brood", "turtle_egg"),
+            Map.entry("garden_feverish", "hay_block"), Map.entry("garden_green_thumb", "wheat_seeds"),
+            Map.entry("garden_crazy", "melon_slice"), Map.entry("garden_answered", "golden_carrot"),
+            Map.entry("garden_copper", "head:garden:DYE_COPPER"), Map.entry("garden_berry", "head:garden:DYE_WILD_STRAWBERRY"),
+            Map.entry("garden_small_step", "model:minecraft:red_stained_glass|glass_bottle"), Map.entry("garden_guests", "sweet_berries"),
+            Map.entry("garden_painted", "flower_pot"), Map.entry("garden_fever_dream", "glistering_melon_slice"),
+            Map.entry("garden_early_bird", "sunflower"), Map.entry("auto_scrap", "iron_nugget"),
+            Map.entry("auto_ticker", "model:hypixel_skyblock:item/uncategorized/synthetic_heart|redstone_block"), Map.entry("auto_switch", "model:hypixel_skyblock:item/uncategorized/control_switch|lever"),
+            Map.entry("auto_motor", "model:hypixel_skyblock:item/uncategorized/superlite_motor|piston"), Map.entry("auto_mirror", "model:hypixel_skyblock:item/uncategorized/robotron_reflector|daylight_detector"),
+            Map.entry("auto_crysis", "model:hypixel_skyblock:item/uncategorized/ftx_3070|observer"), Map.entry("auto_signal", "model:hypixel_skyblock:item/uncategorized/electron_transmitter|repeater"),
+            Map.entry("auto_assembly", "crafting_table"), Map.entry("auto_spare", "hopper"),
+            Map.entry("auto_six_pack", "dispenser"), Map.entry("eye_spy", "model:hypixel_skyblock:item/uncategorized/summoning_eye|ender_eye"),
+            Map.entry("nuc_five_alive", "head:nucleus:AMETHYST_CRYSTAL"), Map.entry("nuc_safecracker", "head:nucleus:JADE_CRYSTAL"),
+            Map.entry("nuc_divine", "head:nucleus:DIVAN_ALLOY"), Map.entry("nuc_jaded", "head:nucleus:DYE_JADE"),
+            Map.entry("nuc_quick_draw", "head:nucleus:PET_ITEM_QUICK_CLAW"), Map.entry("nuc_green_with_envy", "head:nucleus:JADERALD"),
+            Map.entry("nuc_mixologist", "head:nucleus:GEMSTONE_MIXTURE"), Map.entry("nuc_flawless_victory", "head:nucleus:FLAWLESS_RUBY_GEM"),
+            Map.entry("nuc_full_spectrum", "head:nucleus:FLAWLESS_JASPER_GEM"), Map.entry("nuc_locked_out", "head:nucleus:BOB_OMB"),
+            Map.entry("nuc_double_dip", "head:nucleus:TREASURITE"), Map.entry("nuc_heist", "head:nucleus:PRECIOUS_PEARL"),
+            Map.entry("eye_wide_awake", "end_crystal"), Map.entry("eye_insomniac", "dragon_head"),
+            Map.entry("eye_full_altar", "end_portal_frame"), Map.entry("eye_marathon", "obsidian"),
+            Map.entry("eye_double_vision", "ender_chest"), Map.entry("eye_rude_awakening", "dragon_breath"),
+            Map.entry("eye_red_eye", "chorus_fruit"), Map.entry("eye_wink", "popped_chorus_fruit"),
+            Map.entry("eye_first_light", "end_stone"));
+
+    /** How crooked this stamp sits, in radians - fixed per stamp. */
+    public static float tilt(Stamp s) {
+        return (float) ((hash(s.id(), 1) - 0.5) * 0.36);
+    }
+
+    /**
+     * An earned stamp centred on (cx, cy), radius {@code r}.
+     *
+     * @param grade 1-based; a tiered stamp's ring and pips show it
+     * @param ink   0..1, how much ink - the pop-up fades it in
+     */
+    public static void earned(Draw d, int cx, int cy, int r, Stamp s, int grade, float ink, float tilt) {
+        int a = Math.round(255 * clamp(ink));
+        if (a < 6) return;
+        int inkCol = s.chapter().ink;
+        Grade g = s.tiered() ? Grade.of(grade) : null;
+        int ring = g != null ? g.ring : inkCol;
+        Shape sh = shape(s);
+        d.push();
+        d.translate(cx, cy);
+        d.rotate(tilt);
+        fill(d, sh, r, alpha(ring, a));
+        fill(d, sh, r - 2, alpha(PAPER, a));
+        fill(d, sh, r - 3, alpha(inkCol, Math.round(a * 0.92f)));
+        outline(d, sh, r - 5, 1, alpha(PAPER, Math.round(a * 0.55f)));
+        // The stamp's own item in the middle, as big as its shape allows.
+        if (a > 200) {
+            float room = sh == Shape.DIAMOND ? 0.82f : sh == Shape.SHIELD ? 0.9f : 1f;
+            float k = Math.max(0.5f, (r * room - (s.tiered() ? 9 : 7)) / 9f);
+            d.push();
+            d.translate(0, s.tiered() ? -2 : sh == Shape.SHIELD ? -1 : 0);
+            d.scale(k);
+            d.item(item(s), -8, -8);
+            d.pop();
+        }
+        // Worn ink: a few flecks of paper showing through, the same every time.
+        for (int i = 0; i < r; i++) {
+            double ang = hash(s.id(), 10 + i) * Math.PI * 2, rad = (0.35 + 0.6 * hash(s.id(), 40 + i)) * (r - 3);
+            int x = (int) Math.round(Math.cos(ang) * rad), y = (int) Math.round(Math.sin(ang) * rad);
+            if (Math.abs(x) < 7 && Math.abs(y) < 7) continue;
+            if (!inside(sh, x, y, r - 4)) continue;
+            d.fill(x, y, x + 1, y + 1, alpha(PAPER, Math.round(a * 0.7f)));
+        }
+        if (s.tiered()) {
+            int n = s.grades(), gap = 4, w = (n - 1) * gap;
+            for (int i = 0; i < n; i++) {
+                int px = -w / 2 + i * gap, py = r - 6;
+                d.fill(px - 1, py - 1, px + 2, py + 2, alpha(i < grade ? ring : PAPER, i < grade ? a : Math.round(a * 0.5f)));
+            }
+        }
+        d.pop();
+    }
+
+    /** A stamp not earned yet: a dashed pencil circle, a "?" if it is hidden. */
+    public static void empty(Draw d, int cx, int cy, int r, Stamp s, boolean hidden, int mx, int my) {
+        int col = alpha(PENCIL, 0xB0);
+        // Its shape pencilled in, dashed: every edge pixel whose angle falls in an "on" stretch.
+        Shape sh = shape(s);
+        int dashes = Math.max(10, r * 2);
+        for (int y = -r - 1; y <= r + 1; y++) {
+            for (int x = -r - 1; x <= r + 1; x++) {
+                if (!inside(sh, x, y, r) || inside(sh, x, y, r - 1)) continue;
+                double ang = Math.atan2(y, x) + Math.PI;
+                if ((int) (ang / (Math.PI * 2) * dashes) % 2 == 0) d.fill(cx + x, cy + y, cx + x + 1, cy + y + 1, col);
+            }
+        }
+        if (hidden) {
+            int w = d.width("?", true);
+            d.text("?", cx - w / 2 + 1, cy - 4, alpha(PENCIL, 0xD0), true, false);
+        } else if (s.tiered()) {
+            int n = s.grades(), gap = 4, w = (n - 1) * gap;
+            for (int i = 0; i < n; i++) {
+                int px = cx - w / 2 + i * gap, py = cy + r - 7;
+                d.fill(px - 1, py - 1, px + 2, py + 2, alpha(PENCIL, 0x60));
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------ hazard tape
+
+    static final int TAPE = 0xFFF2C21B, TAPE_INK = 0xFF16161A;
+
+    /**
+     * Yellow and black hazard tape centred on (cx, cy), {@code half} long either side, turned {@code angle}, with
+     * {@code label} on a plate of its own so the stripes do not run through it. The Seraph's card and chapter.
+     */
+    public static void hazardTape(Draw d, float cx, float cy, int half, float angle, String label) {
+        int top = -6, bottom = 7, period = 12;
+        d.push();
+        d.translate(cx, cy);
+        d.rotate(angle);
+        d.fill(-half + 1, top + 2, half + 1, bottom + 2, 0x70000000);      // its shadow
+        d.fill(-half, top, half, bottom, TAPE);
+        for (int r = top; r < bottom; r++) {
+            int shift = bottom - r;                                        // each row a pixel along: "/" stripes
+            for (int sx = -half - period; sx < half; sx += period) {
+                int a = Math.max(-half, sx + shift), b = Math.min(half, sx + shift + period / 2);
+                if (a < b) d.fill(a, r, b, r + 1, TAPE_INK);
+            }
+        }
+        d.fill(-half, top, half, top + 1, 0x40FFFFFF);                     // a sheen along its top edge
+        int lw = d.width(label, true), px = lw / 2 + 6;
+        d.fill(-px, top + 1, px, bottom - 1, TAPE);
+        d.fill(-px, top + 1, -px + 1, bottom - 1, TAPE_INK);
+        d.fill(px - 1, top + 1, px, bottom - 1, TAPE_INK);
+        d.text(label, -lw / 2, top + 3, TAPE_INK, true, false);
+        d.pop();
+    }
+
+    // ------------------------------------------------------------------ shapes
+
+    /** Whether (x, y), from the middle, is inside {@code sh} drawn at size {@code r} (y down). */
+    static boolean inside(Shape sh, int x, int y, float r) {
+        if (r <= 0) return false;
+        float ax = Math.abs(x), ay = Math.abs(y);
+        return switch (sh) {
+            case CIRCLE -> x * x + y * y <= r * r + r * 0.8f;
+            case OCTAGON -> ax <= r && ay <= r && ax + ay <= r * 1.38f;
+            case SQUARE -> {
+                float half = r * 0.9f, corner = r * 0.32f;
+                float dx = Math.max(0, ax - (half - corner)), dy = Math.max(0, ay - (half - corner));
+                yield ax <= half && ay <= half && dx * dx + dy * dy <= corner * corner + 0.5f;
+            }
+            case SHIELD -> {
+                float top = -r * 0.88f, waist = r * 0.12f, half = r * 0.9f;
+                if (y < top) yield false;
+                if (y <= waist) yield ax <= half;
+                float f = (y - waist) / (r - waist);
+                yield f <= 1 && ax <= half * Math.pow(1 - f, 0.75);
+            }
+            case DIAMOND -> ax <= r && ay <= r && ax + ay <= r * 1.12f;
+            case SCALLOP -> {
+                double ang = Math.atan2(y, x), rr = r * (0.9 + 0.1 * Math.cos(12 * ang));
+                yield x * x + y * y <= rr * rr + r * 0.6;
+            }
+        };
+    }
+
+    /** {@code sh} filled at size {@code r}, a row of runs at a time. */
+    static void fill(Draw d, Shape sh, float r, int argb) {
+        runs(d, sh, r, -1, argb);
+    }
+
+    /** {@code sh}'s rim, {@code t} thick, at size {@code r}. */
+    static void outline(Draw d, Shape sh, float r, float t, int argb) {
+        runs(d, sh, r, r - t, argb);
+    }
+
+    /** Fills the points inside {@code r} and outside {@code hole} (none if negative), merging each row into runs. */
+    private static void runs(Draw d, Shape sh, float r, float hole, int argb) {
+        int n = (int) Math.ceil(r) + 1;
+        for (int y = -n; y <= n; y++) {
+            int start = Integer.MIN_VALUE;
+            for (int x = -n; x <= n + 1; x++) {
+                boolean in = x <= n && inside(sh, x, y, r) && (hole < 0 || !inside(sh, x, y, hole));
+                if (in && start == Integer.MIN_VALUE) start = x;
+                if (!in && start != Integer.MIN_VALUE) {
+                    d.fill(start, y, x, y + 1, argb);
+                    start = Integer.MIN_VALUE;
+                }
+            }
+        }
+    }
+
+    /** A filled circle, a row at a time. */
+    public static void disc(Draw d, int cx, int cy, int r, int argb) {
+        if (r <= 0) return;
+        for (int y = -r; y <= r; y++) {
+            int w = (int) Math.floor(Math.sqrt(r * r - y * y + r * 0.8));
+            d.fill(cx - w, cy + y, cx + w + 1, cy + y + 1, argb);
+        }
+    }
+
+    /** A ring {@code t} pixels thick at radius {@code r} (outer edge). */
+    public static void ring(Draw d, int cx, int cy, int r, int t, int argb) {
+        int ri = r - t;
+        for (int y = -r; y <= r; y++) {
+            int wo = (int) Math.floor(Math.sqrt(r * r - y * y + r * 0.8));
+            if (Math.abs(y) > ri) {
+                d.fill(cx - wo, cy + y, cx + wo + 1, cy + y + 1, argb);
+                continue;
+            }
+            int wi = (int) Math.floor(Math.sqrt(ri * ri - y * y + ri * 0.8));
+            d.fill(cx - wo, cy + y, cx - wi, cy + y + 1, argb);
+            d.fill(cx + wi + 1, cy + y, cx + wo + 1, cy + y + 1, argb);
+        }
+    }
+
+    // ------------------------------------------------------------------ helpers
+
+    static int alpha(int argb, int a) {
+        int base = argb >>> 24;
+        int out = Math.max(0, Math.min(255, base * a / 255));
+        return (out << 24) | (argb & 0xFFFFFF);
+    }
+
+    static float clamp(float v) {
+        return Math.max(0f, Math.min(1f, v));
+    }
+
+    /** A number in 0..1 fixed by the stamp and a salt. */
+    static double hash(String id, int salt) {
+        long h = id.hashCode() * 0x9E3779B97F4A7C15L ^ (salt * 0xC2B2AE3D27D4EB4FL);
+        h ^= h >>> 31;
+        h *= 0xBF58476D1CE4E5B9L;
+        h ^= h >>> 29;
+        return (h >>> 11) / (double) (1L << 53);
+    }
+}

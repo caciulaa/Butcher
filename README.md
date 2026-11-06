@@ -165,8 +165,8 @@ Butcher is **all rights reserved**. You're welcome to download it, play with it,
 modpacks that download it from Modrinth, and build it from this source for your own game. Please don't re-upload it,
 share your build, modify it or reuse its code or art without asking.
 
-**Ricky** came up with and created the Revenant and Tarantula cutscenes (The Grave and The Cocoon), The Garden, the
-Summoning Eye and the Automatons.
+**Ricky** ([therickshow](https://github.com/therickshow)) came up with and created the Revenant and Tarantula cutscenes
+(The Grave and The Cocoon), The Garden, the Summoning Eye and the Automatons.
 
 ---
 

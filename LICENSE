@@ -6,7 +6,8 @@ license applies to version 0.4.0 and every version after it. Versions released
 earlier under the MIT License keep that license for those copies only.
 
 You may:
-  - download Butcher from its official Modrinth page and use it in your own game;
+  - download Butcher from its official Modrinth page or GitHub releases and use
+    it in your own game;
   - build it from its official source, unchanged, for use in your own game only
     (the jar you build may not be shared);
   - list it in a modpack that downloads it from Modrinth (for example a Modrinth

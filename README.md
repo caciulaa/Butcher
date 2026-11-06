@@ -30,7 +30,7 @@ sound files to download.
 | --- | --- | --- |
 | Crystal Hollows | **The Cleaver** | You kill a Scatha. Pet or pebbles, the worm gets the full treatment. |
 | Glacite Mineshafts | **The Thaw** | You open a Vanguard corpse. Ice is struck, the frost spreads, the loot is revealed, then a profit window tells you if it was worth the key. Two jackpots in one corpse get a twist of their own. |
-| Crystal Hollows | **The Vault** or **The Gauntlet** | You place the fifth crystal in the Crystal Nucleus. Pick a vault door or a golden gauntlet; Divan's Alloy, the Jade Dye and the Quick Claw get their own endings. |
+| Crystal Nucleus | **The Vault** or **The Gauntlet** | You place the fifth crystal. Pick your style: a vault door that opens on your haul, or a golden gauntlet that takes the crystals. Divan's Alloy, the Jade Dye and (in the Vault) the Quick Claw get their own endings. |
 | Diana's Mythological Ritual | **The Chopping Block** | A Sphinx, Minos Inquisitor, Manticore or King Minos dies, or a Minos Relic or Mythological Dye drops. Every big drop has its own ending. |
 | Inferno Demonlord IV | **Hellion** | Your own Demonlord dies. The shield cycles, the rods spin up, the dice get thrown. |
 | Revenant Horror V | **The Grave** | Your own Revenant dies (a tier IV only for its dye). The shovel digs, the coffin opens. |
@@ -164,6 +164,9 @@ Run `./gradlew build` (`.\gradlew.bat build` on Windows) and the jar ends up in 
 Butcher is **all rights reserved**. You're welcome to download it, play with it, make videos of it and include it in
 modpacks that download it from Modrinth, and build it from this source for your own game. Please don't re-upload it,
 share your build, modify it or reuse its code or art without asking.
+
+**Ricky** came up with and created the Revenant and Tarantula cutscenes (The Grave and The Cocoon), The Garden, the
+Summoning Eye and the Automatons.
 
 ---
 
